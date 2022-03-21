@@ -206,64 +206,7 @@ def feature_extraction(filtr_IMFs,sampling_frequency):
 def main():
         current_path=os.getcwd()
 	st.write(current_path)
-        st.set_page_config(
-             page_title="Seizure Prediction",
-             layout="wide",
-             initial_sidebar_state="expanded"
-        )
-        st.set_option('deprecation.showPyplotGlobalUse', False)
-        with st.sidebar:
-            mat_file=st.file_uploader("Upload Image",type=['.mat'])
-            st.write(mat_file)
-            if st.button("Upload"):
-               if mat_file is not None:
-                    file_details = {"Filename":mat_file.name,"FileType":mat_file.type,"FileSize":mat_file.size}
-                    st.write(file_details)
-               else:
-                    st.write("Wrong file format")
-                
-              
-            menu = ["Dog_1","Dog_2","Dog_3","Dog_4","DOg_5","Patient_1","Patient_2"]
-            choice = st.sidebar.selectbox("Select Model",menu)     
-            
-       
-        if choice == "Patient_1":
-               datadf=pd.DataFrame()
-               st.subheader("Patient_1")
-               first_4,last_4,sampling_frequency=preprocess_file(mat_file)
-               dataf=feature_extraction(first_4,sampling_frequency)
-               
-               model_file=os.path.join(current_path,'Patient_1_model.pkl')
-	       st.write(model_file)	
-               if not os.path.isfile(model_file): # If the model is not present
-                      url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit.git/Patient_1_model.pkl'# URL of the model
-                      resp =requests.get(url)
-                      	# Download the model
-                      with open(model_file, 'wb') as fopen:	# Open the file to write the model
-                      	      fopen.write(resp.content)
-                      	      # Write the model
-                      	      
-   
-               #load_model=joblib.load("/home/sadika/Desktop/seizure_project/Patient_1_model.pkl")
-               load_model=joblib.load(model_file)
-               X_test=dataf.to_numpy()
-               
-               grid_predictions = load_model.predict(X_test) 
-               if int(grid_predictions)==int(1):
-                    st.write("Prediction: Preictal")
-               else:
-                    st.write("Prediction : Interictal")   
         
-               
-                                                                                     
-        else:
-           st.subheader("About")
-           st.info("Built with Streamlit")
-           st.info("Sadika Verma")
-           st.text("sadika.verma@gmail.com")
-
-
-
 if __name__ == '__main__':
 	main()
 
