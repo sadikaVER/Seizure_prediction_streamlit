@@ -232,7 +232,7 @@ def main():
                first_4,last_4,sampling_frequency=preprocess_file(mat_file)
                dataf=feature_extraction(first_4,sampling_frequency)
                st.write(dataf) 
-               load_model = jobblib.load('Patient_1_model.pkl') # URL of the model
+               load_model = joblib.load('Patient_1_model.pkl') # URL of the model
                        
                X_test=dataf.to_numpy()
                
