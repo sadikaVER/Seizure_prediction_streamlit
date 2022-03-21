@@ -7,8 +7,7 @@ import streamlit.components.v1 as stc
 
 
 def main():
-    current_path=os.getcwd()
-    st.write(current_path)
+    st.write("helloe")
     
 if __name__ == '__main__':
 	main()
