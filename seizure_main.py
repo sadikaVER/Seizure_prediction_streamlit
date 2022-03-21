@@ -88,13 +88,13 @@ def preprocess_file(file_path):
     
     
     data,data_len_sec,sampling_frequency,channels,num_electrodes=extract_data_from_mat(file_path)
-    raw=covert_mat_mne_format(data,data_len_sec,sampling_frequency,channels,num_electrodes)
+    raw1=covert_mat_mne_format(data,data_len_sec,sampling_frequency,channels,num_electrodes)
    
     # coverting multiple channels to surrogate channel using average filtering
-    data1 = raw.get_data()
+    data1 = raw1.get_data()
     #raw.plot_psd(area_mode='range', tmax=10.0,  average=False)
     sugg_chann=np.mean(data1,axis=0)
-    '''st.write("Spectrogram of surrogate signal")
+    st.write("Spectrogram of surrogate signal")
     
     col1, col2 = st.columns(2)
    
@@ -103,7 +103,7 @@ def preprocess_file(file_path):
         col1.header("Before  Power line Interface")
         bfr=spectogram(sugg_chann,sampling_frequency)
         st.pyplot(bfr)   
-    raw1=raw.notch_filter(60,  filter_length='auto', phase='zero')
+    raw1.notch_filter(60,  filter_length='auto', phase='zero')
     sugg_chann=np.mean(raw1.get_data(),axis=0)  
           
     with col2:
@@ -135,13 +135,13 @@ def preprocess_file(file_path):
        st.pyplot() 
          
     
-    '''   
+    
     # Denoising surrogate channel using Empirical mode decomposition
     IMFs=emd.sift.sift(sugg_chann)
      
-    #st.write("IMFs plots of Surrogate channel")
-    #abc=emd.plotting.plot_imfs(IMFs, scale_y=True, cmap=True)
-    #st.pyplot(abc)   
+    st.write("IMFs plots of Surrogate channel")
+    abc=emd.plotting.plot_imfs(IMFs, scale_y=True, cmap=True)
+    st.pyplot(abc)   
     
     filtr_IMFs1=IMFs.T[1]+IMFs.T[2]+IMFs.T[3]+IMFs.T[4]
     filtr_IMFs_last=IMFs.T[-1]+IMFs.T[-2]+IMFs.T[-3]+IMFs.T[-4]
@@ -232,36 +232,9 @@ def main():
                st.subheader("Patient_1")
                first_4,last_4,sampling_frequency=preprocess_file(mat_file)
                dataf=feature_extraction(first_4,sampling_frequency)
-               url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit/blob/main/Patient_1_model.pkl'# URL of the model
-               resp =requests.get(url)
-               st.write(resp)
-                      	    
-   
-               '''#load_model=joblib.load("/https://github.com/sadikaVER/Seizure_prediction_streamlit.git/blob/master/Patient_1_model.pkl")
-               load_model=joblib.load(model_file)
-               X_test=dataf.to_numpy()
-               
-               grid_predictions = load_model.predict(X_test) 
-               if int(grid_predictions)==int(1):
-                    st.write("Prediction: Preictal")
-               else:
-                    st.write("Prediction : Interictal") '''  
+               st.write(dataf) 
         
-        elif choice == "Patient_2":
-               datadf=pd.DataFrame()
-               st.subheader("Patient_2")
-               first_4,last_4,sampling_frequency=preprocess_file(mat_file)
-               dataf=feature_extraction(first_4,sampling_frequency)
-               
-               
-               load_model=joblib.load(model_file)
-               X_test=dataf.to_numpy()
               
-               grid_predictions = load_model.predict(X_test) 
-               if int(grid_predictions)==int(1):
-                    st.write("Prediction: Preictal")
-               else:
-                    st.write("Prediction : Interictal")        
                                                                                      
         else:
            st.subheader("About")
