@@ -1,4 +1,4 @@
-import joblib
+import joblib,pickle
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 import streamlit as st
@@ -232,7 +232,7 @@ def main():
                first_4,last_4,sampling_frequency=preprocess_file(mat_file)
                dataf=feature_extraction(first_4,sampling_frequency)
                st.write(dataf) 
-               load_model = joblib.load('Patient_1_model.pkl') # URL of the model
+               load_model = pickle.load(open('Patient_1_model.pkl')) # URL of the model
                        
                X_test=dataf.to_numpy()
                
