@@ -1,4 +1,5 @@
-import joblib,pickle
+
+import joblib
 import warnings
 warnings.filterwarnings("ignore", category=FutureWarning)
 import streamlit as st
@@ -6,7 +7,7 @@ import streamlit.components.v1 as stc
 import numpy as np
 import scipy.io
 from matplotlib import pyplot as plt
-import requests
+
 import mne
 from scipy.io import loadmat
 import os,time,pandas as pd,scipy,numpy as np
@@ -25,8 +26,8 @@ import tsfel
 import pandas as pd
 from PIL import Image
 bands = [(0.1, 4, 'delta'), (4, 8, 'Theta'), (8, 12, 'Alpha'), (12, 30, 'Beta'), (30, 70, 'Low Gamma'), (70, 180, 'High Gamma')]
+import requests
 
-import pickle
 
 
 # Fxn
@@ -46,7 +47,9 @@ def spectogram(x,sampling_frequency):
     plt.ylabel('Frequency [Hz]')
     plt.xlabel('Time [sec]')
    
+    
 
+    
 def extract_data_from_mat(file_path):
     '''
     Extract data from .mat file
@@ -65,7 +68,6 @@ def extract_data_from_mat(file_path):
     
     
     return data,data_len_sec,sampling_frequency,channels,num_electrodes
-    
 def covert_mat_mne_format(data,data_len_sec,sampling_frequency,channels,num_electrodes):
     ch_names=channels
     sfreq=sampling_frequency
@@ -77,20 +79,16 @@ def covert_mat_mne_format(data,data_len_sec,sampling_frequency,channels,num_elec
     raw=mne.io.RawArray(data,info,verbose=False)
     return raw
     
-def plot_original_data(raw):
-    eeg_channels = mne.pick_types(raw.info, eeg=True)
-    print("Original EEG data for 10 sec")
-    raw.plot(duration=10 ,order=eeg_channels,block=True,show=False,color='green', 
-         n_channels=len(eeg_channels),remove_dc=False,scalings='auto');
+
 
 def preprocess_file(file_path):
     
     
     data,data_len_sec,sampling_frequency,channels,num_electrodes=extract_data_from_mat(file_path)
-    raw1=covert_mat_mne_format(data,data_len_sec,sampling_frequency,channels,num_electrodes)
+    raw=covert_mat_mne_format(data,data_len_sec,sampling_frequency,channels,num_electrodes)
    
     # coverting multiple channels to surrogate channel using average filtering
-    data1 = raw1.get_data()
+    data1 = raw.get_data()
     #raw.plot_psd(area_mode='range', tmax=10.0,  average=False)
     sugg_chann=np.mean(data1,axis=0)
     st.write("Spectrogram of surrogate signal")
@@ -102,7 +100,7 @@ def preprocess_file(file_path):
         col1.header("Before  Power line Interface")
         bfr=spectogram(sugg_chann,sampling_frequency)
         st.pyplot(bfr)   
-    raw1.notch_filter(60,  filter_length='auto', phase='zero')
+    raw1=raw.notch_filter(60,  filter_length='auto', phase='zero')
     sugg_chann=np.mean(raw1.get_data(),axis=0)  
           
     with col2:
@@ -112,29 +110,25 @@ def preprocess_file(file_path):
     
     st.write("Power spectral density plot of surrogate signal")
     
-    col11, col12 = st.columns(2) 
-    raw=covert_mat_mne_format(data,data_len_sec,sampling_frequency,channels,num_electrodes)
-    # coverting multiple channels to surrogate channel using average filtering
-    data = raw.get_data()
-    #raw.plot_psd(area_mode='range', tmax=10.0,  average=False)
-    sugg_chann=np.mean(data,axis=0)
+    raww=covert_mat_mne_format(data,data_len_sec,sampling_frequency,channels,num_electrodes)
+    col11, col12 = st.columns(2)
     with col11:
-        col11.header("Before  Power line Interface")
-        psd_plt=raw.plot_psd(area_mode='range',fmax=150 ,tmax=10.0,  average=False)
-        plt.show()
-        st.pyplot() 
-            
-    raw.notch_filter(60,  filter_length='auto', phase='zero')
-    sugg_chann=np.mean(raw1.get_data(),axis=0)  
-          
-    with col12:   
-       col12.header("PSD after Powerline noise")
-       psd_plt=raw.plot_psd(area_mode='range',fmax=150 ,tmax=10.0,  average=False)
+       col11.header("PSD before Powerline noise")
+       psd_plt=raww.plot_psd(area_mode='range',fmax=150 ,tmax=10.0,  average=False)
+       plt.show()
+       st.pyplot()
+       
+    raw1=raww.notch_filter(60,  filter_length='auto', phase='zero')
+           
+    with col12:  
+       col2.header("PSD after Powerline noise")
+       psd_plt=raww.plot_psd(area_mode='range',fmax=150 ,tmax=10.0,  average=False)
        plt.show()
        st.pyplot() 
          
+    sugg_chann=np.mean(raww.get_data(),axis=0)  
     
-    
+       
     # Denoising surrogate channel using Empirical mode decomposition
     IMFs=emd.sift.sift(sugg_chann)
      
@@ -203,8 +197,6 @@ def feature_extraction(filtr_IMFs,sampling_frequency):
 
 
 def main():
-        _CWD=os.getcwd()
-        
         st.set_page_config(
              page_title="Seizure Prediction",
              layout="wide",
@@ -213,7 +205,6 @@ def main():
         st.set_option('deprecation.showPyplotGlobalUse', False)
         with st.sidebar:
             mat_file=st.file_uploader("Upload Image",type=['.mat'])
-            
             if st.button("Upload"):
                if mat_file is not None:
                     file_details = {"Filename":mat_file.name,"FileType":mat_file.type,"FileSize":mat_file.size}
@@ -224,16 +215,28 @@ def main():
               
             menu = ["Dog_1","Dog_2","Dog_3","Dog_4","DOg_5","Patient_1","Patient_2"]
             choice = st.sidebar.selectbox("Select Model",menu)     
-            
-       
+             
+              
+        _CWD = os.getcwd() 
+        final_model_file = os.path.join(_CWD,'Patient_1_model.pkl')
+        if not os.path.isfile(final_model_file): # If the model is not present
+           url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit/blob/main/Patient_1_model.pkl?raw=true'
+           resp = requests.get(url)
+           with open(final_model_file, 'wb') as fopen:
+                 fopen.write(resp.content)
+        with open(final_model_file, 'rb') as file:
+        	load_model = joblib.load(file)         
         if choice == "Patient_1":
                datadf=pd.DataFrame()
                st.subheader("Patient_1")
+               
+                
                first_4,last_4,sampling_frequency=preprocess_file(mat_file)
                dataf=feature_extraction(first_4,sampling_frequency)
-               st.write(dataf) 
-               load_model = pickle.load(open('Patient_1_model.pkl')) # URL of the model
-                       
+               
+               
+               
+               
                X_test=dataf.to_numpy()
                
                grid_predictions = load_model.predict(X_test) 
@@ -242,7 +245,22 @@ def main():
                else:
                     st.write("Prediction : Interictal")
         
+        if choice == "Patient_2":
+               datadf=pd.DataFrame()
+               st.subheader("Patient_2")
+               first_4,last_4,sampling_frequency=preprocess_file(mat_file)
+               dataf=feature_extraction(first_4,sampling_frequency)
+               
+               
+               load_model=joblib.load(model_file)
+               X_test=dataf.to_numpy()
               
+               grid_predictions = load_model.predict(X_test) 
+               st.write(grid_predictions)
+               if int(grid_predictions)==int(1):
+                    st.write("Prediction: Preictal")
+               else:
+                    st.write("Prediction : Interictal")        
                                                                                      
         else:
            st.subheader("About")
@@ -254,3 +272,6 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
+
+
