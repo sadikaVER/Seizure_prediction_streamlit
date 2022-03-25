@@ -213,7 +213,7 @@ def main():
                     st.write("Wrong file format")
                 
               
-            menu = ["Select Any ","Dog_1","Dog_2","Dog_3","Dog_4","DOg_5","Patient_1","Patient_2"]
+            menu = ["Select Any ","Dog_1","Dog_2","Dog_3","Dog_4","Dog_5","Patient_1","Patient_2"]
             choice = st.sidebar.selectbox("Select Model",menu)     
              
               
