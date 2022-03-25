@@ -297,6 +297,114 @@ def main():
                     st.write("Prediction: Preictal")
                else:
                     st.write("Prediction : Interictal")        
+        elif choice == "Dog_2":
+               dog_final_model_file = os.path.join(_CWD,'Dog_2_model.pkl')
+               if not os.path.isfile(dog_final_model_file): # If the model is not present
+                   url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit/blob/main/Dog_2_model.pkl?raw=true'
+                   resp = requests.get(url)
+                   with open(dog_final_model_file, 'wb') as fopen:
+                        fopen.write(resp.content)
+               with open(dog_final_model_file, 'rb') as file:
+                     	load_model = joblib.load(file)
+               datadf=pd.DataFrame() 
+              
+               st.subheader("Dog_2")
+               
+                
+               first_4,last_4,sampling_frequency=preprocess_file(mat_file)
+               dataf=feature_extraction(first_4,sampling_frequency)
+               
+               
+               
+               
+               X_test=dataf.to_numpy()
+               
+               grid_predictions = load_model.predict(X_test) 
+               if int(grid_predictions)==int(1):
+                    st.write("Prediction: Preictal")
+               else:
+                    st.write("Prediction : Interictal")            
+        elif choice == "Dog_3":
+               dog_final_model_file = os.path.join(_CWD,'Dog_3_model.pkl')
+               if not os.path.isfile(dog_final_model_file): # If the model is not present
+                   url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit/blob/main/Dog_3_model.pkl?raw=true'
+                   resp = requests.get(url)
+                   with open(dog_final_model_file, 'wb') as fopen:
+                        fopen.write(resp.content)
+               with open(dog_final_model_file, 'rb') as file:
+                     	load_model = joblib.load(file)
+               datadf=pd.DataFrame() 
+              
+               st.subheader("Dog_3")
+               
+                
+               first_4,last_4,sampling_frequency=preprocess_file(mat_file)
+               dataf=feature_extraction(first_4,sampling_frequency)
+               
+               
+               
+               
+               X_test=dataf.to_numpy()
+               
+               grid_predictions = load_model.predict(X_test) 
+               if int(grid_predictions)==int(1):
+                    st.write("Prediction: Preictal")
+               else:
+                    st.write("Prediction : Interictal")            
+        elif choice == "Dog_4":
+               dog_final_model_file = os.path.join(_CWD,'Dog_4_model.pkl')
+               if not os.path.isfile(dog_final_model_file): # If the model is not present
+                   url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit/blob/main/Dog_4_model.pkl?raw=true'
+                   resp = requests.get(url)
+                   with open(dog_final_model_file, 'wb') as fopen:
+                        fopen.write(resp.content)
+               with open(dog_final_model_file, 'rb') as file:
+                     	load_model = joblib.load(file)
+               datadf=pd.DataFrame() 
+              
+               st.subheader("Dog_4")
+               
+                
+               first_4,last_4,sampling_frequency=preprocess_file(mat_file)
+               dataf=feature_extraction(first_4,sampling_frequency)
+               
+               
+               
+               
+               X_test=dataf.to_numpy()
+               
+               grid_predictions = load_model.predict(X_test) 
+               if int(grid_predictions)==int(1):
+                    st.write("Prediction: Preictal")
+               else:
+                    st.write("Prediction : Interictal")            
+        elif choice == "Dog_5":
+               dog_final_model_file = os.path.join(_CWD,'Dog_5_model.pkl')
+               if not os.path.isfile(dog_final_model_file): # If the model is not present
+                   url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit/blob/main/Dog_5_model.pkl?raw=true'
+                   resp = requests.get(url)
+                   with open(dog_final_model_file, 'wb') as fopen:
+                        fopen.write(resp.content)
+               with open(dog_final_model_file, 'rb') as file:
+                     	load_model = joblib.load(file)
+               datadf=pd.DataFrame() 
+              
+               st.subheader("Dog_5")
+               
+                
+               first_4,last_4,sampling_frequency=preprocess_file(mat_file)
+               dataf=feature_extraction(first_4,sampling_frequency)
+               
+               
+               
+               
+               X_test=dataf.to_numpy()
+               
+               grid_predictions = load_model.predict(X_test) 
+               if int(grid_predictions)==int(1):
+                    st.write("Prediction: Preictal")
+               else:
+                    st.write("Prediction : Interictal")            
                                                                                      
         else:
            st.subheader("About")
