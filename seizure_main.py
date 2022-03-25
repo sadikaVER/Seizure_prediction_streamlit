@@ -281,7 +281,8 @@ def main():
                    resp = requests.get(url)
                    with open(final_model_file, 'wb') as fopen:
                         fopen.write(resp.content)
-               with open(final_model_file, 'rb') as file:
+	       
+	       with open(final_model_file, 'rb') as file:
                   	load_model = joblib.load(file)
                datadf=pd.DataFrame()
                st.subheader("Patient_2")
