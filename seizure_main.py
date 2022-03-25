@@ -276,12 +276,12 @@ def main():
         
         elif choice == "Patient_2":
                Patient_final_model_file = os.path.join(_CWD,'Patient_2_model.pkl')
-               if not os.path.isfile(dog_final_model_file): # If the model is not present
+               if not os.path.isfile(Patient_final_model_file): # If the model is not present
                    url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit/blob/main/Patient_2_model.pkl?raw=true'
                    resp = requests.get(url)
-                   with open(dog_final_model_file, 'wb') as fopen:
+                   with open(Patient_final_model_file, 'wb') as fopen:
                         fopen.write(resp.content)
-               with open(dog_final_model_file, 'rb') as file:
+               with open(Patient_final_model_file, 'rb') as file:
                      	load_model = joblib.load(file)
                datadf=pd.DataFrame() 
               
