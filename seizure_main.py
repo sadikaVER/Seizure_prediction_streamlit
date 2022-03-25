@@ -228,7 +228,8 @@ def main():
                         fopen.write(resp.content)
                with open(final_model_file, 'rb') as file:
                      	load_model = joblib.load(file)
-               datadf=pd.DataFrame()
+               datadf=pd.DataFrame() 
+              
                st.subheader("Patient_1")
                
                 
@@ -244,7 +245,7 @@ def main():
                if int(grid_predictions)==int(1):
                     st.write("Prediction: Preictal")
                else:
-                    st.write("Prediction : Interictal")
+                    st.write("Prediction : Interictal")  
                 
         elif choice == "Dog_1":
                dog_final_model_file = os.path.join(_CWD,'Dog_1_model.pkl')
