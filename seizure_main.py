@@ -275,7 +275,8 @@ def main():
                     st.write("Prediction : Interictal")            
         
         elif choice == "Patient_2":
-               if not os.path.isfile(final_model_file): # If the model is not present
+	       Patient_final_model_file = os.path.join(_CWD,'Patient_2_model.pkl')
+               if not os.path.isfile(Patient_final_model_file): # If the model is not present
                    url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit/blob/main/Patient_2_model.pkl?raw=true'
                    resp = requests.get(url)
                    with open(final_model_file, 'wb') as fopen:
