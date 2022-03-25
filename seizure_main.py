@@ -276,29 +276,32 @@ def main():
         
         elif choice == "Patient_2":
                Patient_final_model_file = os.path.join(_CWD,'Patient_2_model.pkl')
-               if not os.path.isfile(Patient_final_model_file): # If the model is not present
+               if not os.path.isfile(dog_final_model_file): # If the model is not present
                    url = r'https://github.com/sadikaVER/Seizure_prediction_streamlit/blob/main/Patient_2_model.pkl?raw=true'
                    resp = requests.get(url)
-                   with open(final_model_file, 'wb') as fopen:
+                   with open(dog_final_model_file, 'wb') as fopen:
                         fopen.write(resp.content)
-	       
-	       with open(final_model_file, 'rb') as file:
-                  	load_model = joblib.load(file)
-               datadf=pd.DataFrame()
+               with open(dog_final_model_file, 'rb') as file:
+                     	load_model = joblib.load(file)
+               datadf=pd.DataFrame() 
+              
                st.subheader("Patient_2")
+               
+                
                first_4,last_4,sampling_frequency=preprocess_file(mat_file)
                dataf=feature_extraction(first_4,sampling_frequency)
                
                
-               load_model=joblib.load(model_file)
+               
+               
                X_test=dataf.to_numpy()
-              
+               
                grid_predictions = load_model.predict(X_test) 
-               st.write(grid_predictions)
                if int(grid_predictions)==int(1):
                     st.write("Prediction: Preictal")
                else:
-                    st.write("Prediction : Interictal")        
+                    st.write("Prediction : Interictal")            
+                                                                
         elif choice == "Dog_2":
                dog_final_model_file = os.path.join(_CWD,'Dog_2_model.pkl')
                if not os.path.isfile(dog_final_model_file): # If the model is not present
